@@ -5,7 +5,9 @@
  */
 package com.guru.stokguruv2.view;
 
+import com.guru.stokguruv2.controller.MainFrameController;
 import com.guru.stokguruv2.controller.StokListesiController;
+import com.guru.stokguruv2.gui.IMainFrame;
 import com.guru.stokguruv2.gui.IStokListesi;
 import javax.swing.JTable;
 
@@ -18,9 +20,11 @@ public class StokListesi extends javax.swing.JInternalFrame implements IStokList
     /**
      * Creates new form StokListesi2
      */
+    
+    
     public StokListesi() {
         initComponents();
-         StokListesiController stokListesiController = new StokListesiController(this);
+        
     }
 
     /**

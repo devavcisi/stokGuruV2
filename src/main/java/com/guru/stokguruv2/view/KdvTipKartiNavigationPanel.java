@@ -10,59 +10,41 @@ public class KdvTipKartiNavigationPanel extends AbstractNavigationPanel {
 
         this.controller = kdvKartiController;
 
-        // Kaydet butonuna listener ekle
-        btnSave.addActionListener(e -> controller.saveKdv());
-
-        // Sil butonuna listener ekle
-        btnDelete.addActionListener(e -> controller.deleteKdv());
-
-        // Kaydet butonuna listener ekle
-        btnFirst.addActionListener(e -> controller.firstKdv());
-
-        // Sil butonuna listener ekle
-        btnNext.addActionListener(e -> controller.nextKdv());
-
-        // Kaydet butonuna listener ekle
-        btnPrevious.addActionListener(e -> controller.previousKdv());
-
-        // Sil butonuna listener ekle
-        btnLast.addActionListener(e -> controller.lastKdv());
-
-        btnUpdate.addActionListener((e) -> controller.updateKdv());
-    }
-
-    @Override
-    protected void firstRecord() {
        
     }
 
     @Override
-    protected void previousRecord() {
+    protected void firstRecord() {
+    controller.firstKdv();
+    }
 
+    @Override
+    protected void previousRecord() {
+         controller.previousKdv();
     }
 
     @Override
     protected void nextRecord() {
-
+         controller.nextKdv();
     }
 
     @Override
     protected void lastRecord() {
-
+        controller.lastKdv();
     }
 
     @Override
     protected void saveRecord() {
-
+        controller.saveKdv();
     }
 
     @Override
     protected void deleteRecord() {
-
+        controller.deleteKdv();
     }
 
     @Override
     protected void updateRecord() {
-
+        controller.updateKdv();
     }
 }

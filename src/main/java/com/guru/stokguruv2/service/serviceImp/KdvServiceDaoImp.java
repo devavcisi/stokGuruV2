@@ -67,6 +67,11 @@ public class KdvServiceDaoImp implements KdvServiceDao{
     public KdvTipKarti lastKdv() {
         return kdvservice.lastKdv();
     }
+
+    @Override
+    public KdvTipKarti getKdvTipKartiById(int id) {
+        return kdvservice.getKdvTipKartiById(id);
+    }
     
     
     

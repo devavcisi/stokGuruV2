@@ -10,59 +10,40 @@ public class StokKartiNavigationPanel extends AbstractNavigationPanel {
     public StokKartiNavigationPanel(StokKartiController controller) {
         this.controller = controller;
 
-        // Kaydet butonuna listener ekle
-        btnSave.addActionListener(e -> controller.saveStok());
-
-        // Sil butonuna listener ekle
-        btnDelete.addActionListener(e -> controller.deleteStok());
-        
-        // Kaydet butonuna listener ekle
-        btnFirst.addActionListener(e -> controller.firstStok());
-
-        // Sil butonuna listener ekle
-        btnNext.addActionListener(e -> controller.nextStok());
-        
-        // Kaydet butonuna listener ekle
-        btnPrevious.addActionListener(e -> controller.previousStok());
-
-        // Sil butonuna listener ekle
-        btnLast.addActionListener(e -> controller.lastStok());
-        
-        btnUpdate.addActionListener((e) -> controller.updateStok());
     }
 
     @Override
     protected void firstRecord() {
-      
+       controller.firstStok();
     }
 
     @Override
     protected void previousRecord() {
-      
+       controller.previousStok();
     }
 
     @Override
     protected void nextRecord() {
-      
+      controller.nextStok();
     }
 
     @Override
     protected void lastRecord() {
-        
+        controller.lastStok();
     }
 
     @Override
     protected void saveRecord() {
-        
+        controller.saveStok();
     }
 
     @Override
     protected void deleteRecord() {
-        
+        controller.deleteStok();
     }
 
     @Override
     protected void updateRecord() {
-      
+      controller.updateStok();
     }
 }

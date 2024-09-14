@@ -5,10 +5,10 @@
  */
 package com.guru.stokguruv2.controller;
 
-import com.guru.stokguruv2.HibernateUtil;
 import com.guru.stokguruv2.entitie.model.KdvItem;
 import com.guru.stokguruv2.entitie.model.KdvTipKarti;
 import com.guru.stokguruv2.entitie.model.Stok;
+import com.guru.stokguruv2.gui.IMainFrame;
 import com.guru.stokguruv2.gui.IStokKarti;
 import com.guru.stokguruv2.service.serviceImp.KdvServiceDaoImp;
 import com.guru.stokguruv2.service.serviceImp.StokServiceDaoImp;
@@ -19,13 +19,8 @@ import java.awt.event.ActionListener;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 /**
  *
@@ -33,6 +28,7 @@ import org.hibernate.query.Query;
  */
 public class StokKartiController {
 
+    private IMainFrame mainFrame;
     private IStokKarti stokKarti;
     StokServiceDaoImp stokService = new StokServiceDaoImp();
     KdvServiceDaoImp kdvService = new KdvServiceDaoImp();
@@ -49,15 +45,15 @@ public class StokKartiController {
 
     private StokKartiNavigationPanel navigationPanel;
 
-    public StokKartiController(IStokKarti stokKarti) {
+    public StokKartiController(IStokKarti stokKarti, IMainFrame mainFrame) {
         this.stokKarti = stokKarti;
+        this.mainFrame = mainFrame;
         initController();
 
         navigationPanel = new StokKartiNavigationPanel(this);
 
         stokKarti.getNavPanel().add(navigationPanel, BorderLayout.SOUTH);
 
-        // Yeniden çizim ve boyutlandırma
         stokKarti.getNavPanel().revalidate();
         stokKarti.getNavPanel().repaint();
     }
@@ -68,7 +64,6 @@ public class StokKartiController {
         timestamp = Timestamp.valueOf(now);
         stokKarti.setTarih(timestamp);
         aramaYap();
-        // kdvleriCek();
 
     }
 
@@ -81,25 +76,23 @@ public class StokKartiController {
         stokAdi = stokKarti.getStokAdi();
         stokTipi = stokKarti.getStokTipi();
 
-        // JComboBox'dan seçilen KdvItem nesnesini al
         KdvItem selectedItem = (KdvItem) stokKarti.getKdvComboBox().getSelectedItem();
         if (selectedItem != null) {
             kdvTipi = selectedItem.getId();
         } else {
-            kdvTipi = 0; // KDV seçilmemişse varsayılan bir değer
+            kdvTipi = 0;
         }
 
         stokBirimi = stokKarti.getStokBirimi();
         aciklama = stokKarti.getAciklama();
     }
 
-    private void updateFormFields(Stok stok) {
+    public void updateFormFields(Stok stok) {
         stokKarti.setStokKodu(stok.getStokKodu());
         stokKarti.setStokBarkodu(stok.getBarkodu());
         stokKarti.setStokAdi(stok.getStokAdi());
         stokKarti.setAciklama(stok.getAciklama());
 
-        // KDV adını ayarla
         KdvItem selectedItem = null;
         for (int i = 0; i < stokKarti.getKdvComboBox().getItemCount(); i++) {
             KdvItem item = (KdvItem) stokKarti.getKdvComboBox().getItemAt(i);
@@ -110,26 +103,24 @@ public class StokKartiController {
         }
         stokKarti.getKdvComboBox().setSelectedItem(selectedItem);
 
-        // Stok tipi olarak String değeri ayarla
         String stokTipiStr = Integer.toString(stok.getStokTipi());
         stokKarti.setStokTipi(stokTipiStr);
 
-        // Tarih formatını dönüştür
         if (stok.getOlusturmaZamani() != null) {
             LocalDateTime olusturmaZamani = stok.getOlusturmaZamani().toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime();
-            Timestamp timestamp = Timestamp.valueOf(olusturmaZamani); // LocalDateTime'ı Timestamp'e dönüştür
+            Timestamp timestamp = Timestamp.valueOf(olusturmaZamani);
 
-            stokKarti.setTarih(timestamp); // Tarihi Timestamp olarak set et
+            stokKarti.setTarih(timestamp);
         } else {
-            stokKarti.setTarih(null); // Tarih boşsa varsayılan bir değer belirleyin
+            stokKarti.setTarih(null);
         }
         stokKarti.setStokBirimi(stok.getBirimi());
     }
 
     public void saveStok() {
-        // Kaydet işlemleri
+
         String stokKodu = stokKarti.getStokKodu();
         if (stokKodu == null || stokKodu.trim().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Stok Kodu boş olamaz!");
@@ -152,6 +143,7 @@ public class StokKartiController {
                 try {
                     Stok stokkarti = new Stok(stokKodu, stokAdi, stokTipi, stokBirimi, stokBarkodu, kdvTipi, aciklama, timestamp);
                     String a = stokService.addStokKarti(stokkarti);
+                    MainFrameController.getInstance(mainFrame).getStokListesiController().tabloyuDoldur();
                     JOptionPane.showMessageDialog(null, a);
 
                 } catch (RuntimeException ex) {
@@ -225,31 +217,32 @@ public class StokKartiController {
     }
 
     public void deleteStok() {
-        getStokFromFields(); // Formdan stok verilerini al
+        getStokFromFields();
 
-        Stok stok = stokService.getStokbyStokKoduStokKarti(stokKodu); // Stok koduna göre stok bul
+        Stok stok = stokService.getStokbyStokKoduStokKarti(stokKodu);
         if (stokKodu != null && stok != null) {
 
             try {
-                // Stok kaydını sil
-                String response = stokService.removeStokKarti(stokKodu);
-                JOptionPane.showMessageDialog(null, response);
 
-                // Bir önceki kaydı getir
+                String response = stokService.removeStokKarti(stokKodu);
+
+                JOptionPane.showMessageDialog(null, response);
+                MainFrameController.getInstance(mainFrame).getStokListesiController().tabloyuDoldur();
+
                 Stok previousStok = stokService.previousStok(stok.getId());
 
                 if (previousStok != null) {
-                    updateFormFields(previousStok); // Bir önceki kaydı göster
+                    updateFormFields(previousStok);
                 } else {
-                    // Eğer önceki kayıt yoksa bir sonraki kaydı getir
+
                     Stok nextStok = stokService.nextStok(stok.getId());
 
                     if (nextStok != null) {
-                        updateFormFields(nextStok); // Bir sonraki kaydı göster
+                        updateFormFields(nextStok);
                     } else {
-                        // Eğer ne önceki ne de sonraki kayıt yoksa "stok kalmadı" mesajı göster
+
                         JOptionPane.showMessageDialog(null, "Stok kartı kalmadı.");
-                        clearFormFields(); // Form alanlarını temizle
+                        clearFormFields();
                     }
                 }
             } catch (RuntimeException ex) {
@@ -267,7 +260,7 @@ public class StokKartiController {
         stokKarti.setStokBarkodu("");
         stokKarti.setAciklama("");
         kdvTipi = 0;
-        // KDV tipi sıfırla
+
     }
 
     public void firstStok() {
@@ -348,7 +341,7 @@ public class StokKartiController {
                 Stok stok = new Stok(stokKodu, stokAdi, stokTipi, stokBirimi, stokBarkodu, kdvTipi, aciklama, timestamp);
                 String guncellemeCevabi = stokService.updateStokKarti(stok);
                 JOptionPane.showMessageDialog(null, guncellemeCevabi);
-
+                MainFrameController.getInstance(mainFrame).getStokListesiController().tabloyuDoldur();
             } catch (RuntimeException es) {
                 JOptionPane.showMessageDialog(null, es.getMessage());
             }
@@ -358,13 +351,14 @@ public class StokKartiController {
         }
     }
 
-    private void kdvleriCek() {
+    public void kdvleriCek() {
         stokKarti.getKdvComboBox().removeAllItems();
         try {
 
             kdvTipleriListesi = kdvService.getAllKdvTypes();
             for (KdvTipKarti kdvTipi : kdvTipleriListesi) {
                 stokKarti.getKdvComboBox().addItem(new KdvItem(kdvTipi.getId(), kdvTipi.getAdi()));
+              
             }
         } catch (Exception e) {
             e.printStackTrace();

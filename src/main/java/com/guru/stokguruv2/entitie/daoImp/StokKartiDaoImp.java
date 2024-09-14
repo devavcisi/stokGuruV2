@@ -27,7 +27,6 @@ public class StokKartiDaoImp implements StokKartiDao {
         try {
             transaction = session.beginTransaction();
 
-         
             String stokKodu = stokKarti.getStokKodu();
             String hql = "FROM Stok WHERE stokKodu = :stokKodu";
             Query<Stok> query = session.createQuery(hql, Stok.class);
@@ -36,12 +35,12 @@ public class StokKartiDaoImp implements StokKartiDao {
             Stok existingStok = query.uniqueResult();
 
             if (existingStok == null) {
-            
+
                 session.save(stokKarti);
                 transaction.commit();
                 return "Stok başarıyla eklendi.";
             } else {
-        
+
                 transaction.rollback();
                 return "Hata: Aynı stok koduna sahip bir stok zaten mevcut.";
             }
@@ -100,10 +99,8 @@ public class StokKartiDaoImp implements StokKartiDao {
                 return "Hata! Veritabanında bu stok kartı bulunamadı.";
             }
 
-         
             boolean degisiklikVar = false;
 
-           
             if (!mevcutStokKarti.getStokAdi().equals(stokKarti.getStokAdi())) {
                 mevcutStokKarti.setStokAdi(stokKarti.getStokAdi());
                 degisiklikVar = true;
@@ -129,7 +126,6 @@ public class StokKartiDaoImp implements StokKartiDao {
                 degisiklikVar = true;
             }
 
-         
             if (!degisiklikVar) {
                 return "Değişiklik yapılmadı, güncelleme işlemi gerçekleşmedi.";
             }
@@ -148,27 +144,27 @@ public class StokKartiDaoImp implements StokKartiDao {
         s.beginTransaction();
         List<Stok> stokList = s.createQuery("FROM Stok", Stok.class).list();
         s.getTransaction().commit();
-        s.close(); 
+        s.close();
         return stokList;
     }
 
     @Override
-public Stok getStokbyStokKoduStokKarti(String stokKodu) {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    Stok stok = null;
-    try {
-        // HQL sorgusu ile stok verisini getir
-        String hql = "FROM Stok WHERE stokKodu = :stokKodu";
-        Query<Stok> query = session.createQuery(hql, Stok.class);
-        query.setParameter("stokKodu", stokKodu);
-        stok = query.uniqueResult();
-    } catch (Exception e) {
-        e.printStackTrace();
-    } finally {
-        session.close();
+    public Stok getStokbyStokKoduStokKarti(String stokKodu) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Stok stok = null;
+        try {
+
+            String hql = "FROM Stok WHERE stokKodu = :stokKodu";
+            Query<Stok> query = session.createQuery(hql, Stok.class);
+            query.setParameter("stokKodu", stokKodu);
+            stok = query.uniqueResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return stok;
     }
-    return stok;
-}
 
     @Override
     public List<Stok> searchStokByKodu(String stokKodu) {
@@ -183,100 +179,98 @@ public Stok getStokbyStokKoduStokKarti(String stokKodu) {
 
     @Override
     public Stok nextStok(int id) {
-         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
             String hql = "FROM Stok WHERE id > :id ORDER BY id ASC";
             Query<Stok> query = session.createQuery(hql, Stok.class);
             query.setParameter("id", id);
-            query.setMaxResults(1); // To get only the next record
+            query.setMaxResults(1);
             Stok stok = query.uniqueResult();
             session.getTransaction().commit();
             return stok;
         } catch (Exception e) {
             e.printStackTrace();
-            throw e; // Or handle it as needed
+            throw e;
         }
     }
 
     @Override
     public Stok previousStok(int id) {
-         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
             String hql = "FROM Stok WHERE id < :id ORDER BY id DESC";
             Query<Stok> query = session.createQuery(hql, Stok.class);
             query.setParameter("id", id);
-            query.setMaxResults(1); // To get only the previous record
+            query.setMaxResults(1);
             Stok stok = query.uniqueResult();
             session.getTransaction().commit();
             return stok;
         } catch (Exception e) {
             e.printStackTrace();
-            throw e; // Or handle it as needed
+            throw e;
         }
     }
 
     @Override
     public Stok firsStok() {
-         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
             String hql = "FROM Stok ORDER BY id ASC";
             Query<Stok> query = session.createQuery(hql, Stok.class);
-            query.setMaxResults(1); // To get only the first record
+            query.setMaxResults(1);
             Stok stok = query.uniqueResult();
             session.getTransaction().commit();
             return stok;
         } catch (Exception e) {
             e.printStackTrace();
-            throw e; // Or handle it as needed
+            throw e;
         }
     }
 
     @Override
     public Stok lastStok() {
-         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
             String hql = "FROM Stok ORDER BY id DESC";
             Query<Stok> query = session.createQuery(hql, Stok.class);
-            query.setMaxResults(1); // To get only the last record
+            query.setMaxResults(1);
             Stok stok = query.uniqueResult();
             session.getTransaction().commit();
             return stok;
         } catch (Exception e) {
             e.printStackTrace();
-            throw e; // Or handle it as needed
+            throw e;
         }
     }
 
-@Override
-public List<StokKdvDTO> getListStokKartiByKdvDTO() {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    Transaction tx = null;
-    List<StokKdvDTO> stokKdvDTOList = null;
+    @Override
+    public List<StokKdvDTO> getListStokKartiByKdvDTO() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        List<StokKdvDTO> stokKdvDTOList = null;
 
-    try {
-        tx = session.beginTransaction();
-        
-        // HQL sorgusunu burada yazın
-    String hql = "SELECT new com.guru.stokguruv2.entitie.model.StokKdvDTO(" +
-                "s.stokKodu, s.stokAdi, s.stokTipi, s.birimi, s.barkodu, " +
-                "k.kodu, k.adi, k.orani, s.aciklama, s.olusturmaZamani) " +
-                "FROM Stok s " +
-                "INNER JOIN KdvTipKarti k ON s.kdvTipi = k.id";
-        stokKdvDTOList = session.createQuery(hql, StokKdvDTO.class).list();
-        
-        tx.commit();
-    } catch (Exception e) {
-        if (tx != null) {
-            tx.rollback();
+        try {
+            tx = session.beginTransaction();
+
+           
+            String hql = "SELECT new com.guru.stokguruv2.entitie.model.StokKdvDTO("
+                    + "s.stokKodu, s.stokAdi, s.stokTipi, s.birimi, s.barkodu, "
+                    + "k.kodu, k.adi, k.orani, s.aciklama, s.olusturmaZamani) "
+                    + "FROM Stok s "
+                    + "INNER JOIN KdvTipKarti k ON s.kdvTipi = k.id";
+            stokKdvDTOList = session.createQuery(hql, StokKdvDTO.class).list();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
         }
-        e.printStackTrace();
-    } finally {
-        session.close();
+
+        return stokKdvDTOList;
     }
-    
-    return stokKdvDTOList;
-}
-
-
 
 }

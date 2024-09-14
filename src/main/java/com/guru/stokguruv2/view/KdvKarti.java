@@ -5,11 +5,8 @@
  */
 package com.guru.stokguruv2.view;
 
-import com.guru.stokguruv2.controller.KdvKartiController;
-import com.guru.stokguruv2.entitie.dao.KdvKartiDao;
 import com.guru.stokguruv2.gui.IKdvKarti;
-import java.awt.event.ActionListener;
-import java.util.Set;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 /**
@@ -23,7 +20,7 @@ public class KdvKarti extends javax.swing.JInternalFrame implements IKdvKarti{
      */
     public KdvKarti() {
         initComponents();
-        KdvKartiController kdvKartiController = new KdvKartiController(this);
+       
     }
 
     /**
@@ -42,7 +39,7 @@ public class KdvKarti extends javax.swing.JInternalFrame implements IKdvKarti{
         txtKdvKodu = new javax.swing.JTextField();
         txtKdvAdi = new javax.swing.JTextField();
         txtKdvOrani = new javax.swing.JTextField();
-        btnAra = new javax.swing.JButton();
+        cmbKdvList = new javax.swing.JComboBox<>();
 
         setClosable(true);
         setIconifiable(true);
@@ -57,7 +54,7 @@ public class KdvKarti extends javax.swing.JInternalFrame implements IKdvKarti{
 
         jLabel3.setText("KDV Adı");
 
-        btnAra.setText("Ara");
+        cmbKdvList.setSelectedItem(null);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -68,9 +65,9 @@ public class KdvKarti extends javax.swing.JInternalFrame implements IKdvKarti{
                 .addComponent(pnlKdvNavigation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(btnAra, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
+                .addGap(44, 44, 44)
+                .addComponent(cmbKdvList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtKdvKodu, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -82,7 +79,7 @@ public class KdvKarti extends javax.swing.JInternalFrame implements IKdvKarti{
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtKdvOrani, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(88, Short.MAX_VALUE))
+                .addContainerGap(116, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -92,13 +89,13 @@ public class KdvKarti extends javax.swing.JInternalFrame implements IKdvKarti{
                     .addComponent(jLabel1)
                     .addComponent(jLabel3)
                     .addComponent(jLabel2))
-                .addGap(2, 2, 2)
+                .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtKdvKodu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtKdvAdi)
                     .addComponent(txtKdvOrani, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAra))
-                .addGap(72, 72, 72)
+                    .addComponent(cmbKdvList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(74, 74, 74)
                 .addComponent(pnlKdvNavigation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49))
         );
@@ -108,7 +105,7 @@ public class KdvKarti extends javax.swing.JInternalFrame implements IKdvKarti{
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAra;
+    private javax.swing.JComboBox<String> cmbKdvList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -123,10 +120,7 @@ public class KdvKarti extends javax.swing.JInternalFrame implements IKdvKarti{
         return pnlKdvNavigation;
     }
 
-    @Override
-    public void buttonAra(ActionListener actionListener) {
-       btnAra.addActionListener(actionListener);
-    }
+    
 
     @Override
     public String getKdvAdi() {
@@ -157,5 +151,10 @@ public class KdvKarti extends javax.swing.JInternalFrame implements IKdvKarti{
     @Override
     public void setKdvOrani(String kdvOrani) {
          txtKdvOrani.setText(kdvOrani);
+    }
+
+    @Override
+    public JComboBox getKdvComboBox() {
+       return cmbKdvList;
     }
 }

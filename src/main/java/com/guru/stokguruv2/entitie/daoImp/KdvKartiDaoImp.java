@@ -8,7 +8,6 @@ package com.guru.stokguruv2.entitie.daoImp;
 import com.guru.stokguruv2.HibernateUtil;
 import com.guru.stokguruv2.entitie.dao.KdvKartiDao;
 import com.guru.stokguruv2.entitie.model.KdvTipKarti;
-import com.guru.stokguruv2.entitie.model.Stok;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,21 +17,20 @@ import org.hibernate.query.Query;
  *
  * @author User
  */
-public class KdvKartiDaoImp implements  KdvKartiDao{
+public class KdvKartiDaoImp implements KdvKartiDao {
 
     @Override
     public List<KdvTipKarti> getAllKdvTypes() {
-       Session session = HibernateUtil.getSessionFactory().openSession();
-       session.beginTransaction();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
         String hql = "FROM KdvTipKarti";
-       List<KdvTipKarti> kdvler = session.createQuery(hql, KdvTipKarti.class).list();
+        List<KdvTipKarti> kdvler = session.createQuery(hql, KdvTipKarti.class).list();
         session.getTransaction().commit();
-        session.close(); 
-          return kdvler ;
-       
+        session.close();
+        return kdvler;
+
     }
-    
-    
+
     @Override
     public String addKdvTipKarti(KdvTipKarti kdvTipKarti) {
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -65,9 +63,8 @@ public class KdvKartiDaoImp implements  KdvKartiDao{
             session.close();
         }
     }
-    
-    
-       @Override
+
+    @Override
     public String removeKdvTipKarti(String kdvKodu) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -91,59 +88,58 @@ public class KdvKartiDaoImp implements  KdvKartiDao{
             session.close();
         }
     }
-    
-  @Override
-public String updateKdvTipKarti(KdvTipKarti kdvTipKarti) {
-    try {
-        if (kdvTipKarti == null) {
-            return "Hata! Güncellenecek KDV Tip Kartı bulunamadı.";
+
+    @Override
+    public String updateKdvTipKarti(KdvTipKarti kdvTipKarti) {
+        try {
+            if (kdvTipKarti == null) {
+                return "Hata! Güncellenecek KDV Tip Kartı bulunamadı.";
+            }
+
+            Session s = HibernateUtil.getSessionFactory().openSession();
+            s.beginTransaction();
+
+            String hql = "FROM KdvTipKarti WHERE kodu = :kdvKodu";
+            KdvTipKarti mevcutKdvTipKarti = (KdvTipKarti) s.createQuery(hql)
+                    .setParameter("kdvKodu", kdvTipKarti.getKodu())
+                    .uniqueResult();
+
+            if (mevcutKdvTipKarti == null) {
+                return "Hata! Veritabanında bu KDV Tip Kartı bulunamadı.";
+            }
+
+            boolean degisiklikVar = false;
+
+         
+            if (!mevcutKdvTipKarti.getAdi().equals(kdvTipKarti.getAdi())) {
+                mevcutKdvTipKarti.setAdi(kdvTipKarti.getAdi());
+                degisiklikVar = true;
+            }
+
+          
+            if (Math.abs(mevcutKdvTipKarti.getOrani() - kdvTipKarti.getOrani()) > 0.0001) {
+                mevcutKdvTipKarti.setOrani(kdvTipKarti.getOrani());
+                degisiklikVar = true;
+            }
+
+           
+            if (!mevcutKdvTipKarti.getKodu().equals(kdvTipKarti.getKodu())) {
+                mevcutKdvTipKarti.setKodu(kdvTipKarti.getKodu());
+                degisiklikVar = true;
+            }
+
+            if (!degisiklikVar) {
+                return "Değişiklik yapılmadı, güncelleme işlemi gerçekleşmedi.";
+            }
+
+            s.update(mevcutKdvTipKarti);
+            s.getTransaction().commit();
+            return "KDV Tip Kartı başarıyla güncellendi.";
+        } catch (Exception e) {
+            return "Hata! " + e.getMessage();
         }
-
-        Session s = HibernateUtil.getSessionFactory().openSession();
-        s.beginTransaction();
-
-        String hql = "FROM KdvTipKarti WHERE kodu = :kdvKodu";
-        KdvTipKarti mevcutKdvTipKarti = (KdvTipKarti) s.createQuery(hql)
-                .setParameter("kdvKodu", kdvTipKarti.getKodu())
-                .uniqueResult();
-
-        if (mevcutKdvTipKarti == null) {
-            return "Hata! Veritabanında bu KDV Tip Kartı bulunamadı.";
-        }
-
-        boolean degisiklikVar = false;
-
-        // Adı karşılaştır
-        if (!mevcutKdvTipKarti.getAdi().equals(kdvTipKarti.getAdi())) {
-            mevcutKdvTipKarti.setAdi(kdvTipKarti.getAdi());
-            degisiklikVar = true;
-        }
-
-        // Oranı karşılaştır (küçük bir toleransla)
-        if (Math.abs(mevcutKdvTipKarti.getOrani() - kdvTipKarti.getOrani()) > 0.0001) {
-            mevcutKdvTipKarti.setOrani(kdvTipKarti.getOrani());
-            degisiklikVar = true;
-        }
-
-        // Kodu karşılaştır
-        if (!mevcutKdvTipKarti.getKodu().equals(kdvTipKarti.getKodu())) {
-            mevcutKdvTipKarti.setKodu(kdvTipKarti.getKodu());
-            degisiklikVar = true;
-        }
-
-        if (!degisiklikVar) {
-            return "Değişiklik yapılmadı, güncelleme işlemi gerçekleşmedi.";
-        }
-
-        s.update(mevcutKdvTipKarti);
-        s.getTransaction().commit();
-        return "KDV Tip Kartı başarıyla güncellendi.";
-    } catch (Exception e) {
-        return "Hata! " + e.getMessage();
     }
-}
 
-       
     @Override
     public KdvTipKarti getKdvTipKartiByKodu(String kdvKodu) {
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -152,6 +148,23 @@ public String updateKdvTipKarti(KdvTipKarti kdvTipKarti) {
             String hql = "FROM KdvTipKarti WHERE kodu = :kdvKodu";
             Query<KdvTipKarti> query = session.createQuery(hql, KdvTipKarti.class);
             query.setParameter("kdvKodu", kdvKodu);
+            kdvTipKarti = query.uniqueResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return kdvTipKarti;
+    }
+    
+     @Override
+    public KdvTipKarti getKdvTipKartiById (int id) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        KdvTipKarti kdvTipKarti = null;
+        try {
+            String hql = "FROM KdvTipKarti WHERE id = :id";
+            Query<KdvTipKarti> query = session.createQuery(hql, KdvTipKarti.class);
+            query.setParameter("id", id);
             kdvTipKarti = query.uniqueResult();
         } catch (Exception e) {
             e.printStackTrace();
@@ -174,69 +187,68 @@ public String updateKdvTipKarti(KdvTipKarti kdvTipKarti) {
 
     @Override
     public KdvTipKarti nextKdv(int id) {
-    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-        session.beginTransaction();
-        String hql = "FROM KdvTipKarti WHERE id > :id ORDER BY id ASC";
-        Query<KdvTipKarti> query = session.createQuery(hql, KdvTipKarti.class);
-        query.setParameter("id", id);
-        query.setMaxResults(1); // Sadece bir sonraki kaydı getir
-        KdvTipKarti kdvTip = query.uniqueResult();
-        session.getTransaction().commit();
-        return kdvTip;
-    } catch (Exception e) {
-        e.printStackTrace();
-        throw e; // Hataları üst katmana ilet
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            String hql = "FROM KdvTipKarti WHERE id > :id ORDER BY id ASC";
+            Query<KdvTipKarti> query = session.createQuery(hql, KdvTipKarti.class);
+            query.setParameter("id", id);
+            query.setMaxResults(1); // Sadece bir sonraki kaydı getir
+            KdvTipKarti kdvTip = query.uniqueResult();
+            session.getTransaction().commit();
+            return kdvTip;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e; 
+        }
     }
-}
 
     @Override
-public KdvTipKarti previousKdv(int id) {
-    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-        session.beginTransaction();
-        String hql = "FROM KdvTipKarti WHERE id < :id ORDER BY id DESC";
-        Query<KdvTipKarti> query = session.createQuery(hql, KdvTipKarti.class);
-        query.setParameter("id", id);
-        query.setMaxResults(1); // Sadece bir önceki kaydı getir
-        KdvTipKarti kdvTip = query.uniqueResult();
-        session.getTransaction().commit();
-        return kdvTip;
-    } catch (Exception e) {
-        e.printStackTrace();
-        throw e;
+    public KdvTipKarti previousKdv(int id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            String hql = "FROM KdvTipKarti WHERE id < :id ORDER BY id DESC";
+            Query<KdvTipKarti> query = session.createQuery(hql, KdvTipKarti.class);
+            query.setParameter("id", id);
+            query.setMaxResults(1); 
+            KdvTipKarti kdvTip = query.uniqueResult();
+            session.getTransaction().commit();
+            return kdvTip;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
-}
 
     @Override
     public KdvTipKarti firstKdv() {
-    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-        session.beginTransaction();
-        String hql = "FROM KdvTipKarti ORDER BY id ASC";
-        Query<KdvTipKarti> query = session.createQuery(hql, KdvTipKarti.class);
-        query.setMaxResults(1); // Sadece ilk kaydı getir
-        KdvTipKarti kdvTip = query.uniqueResult();
-        session.getTransaction().commit();
-        return kdvTip;
-    } catch (Exception e) {
-        e.printStackTrace();
-        throw e;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            String hql = "FROM KdvTipKarti ORDER BY id ASC";
+            Query<KdvTipKarti> query = session.createQuery(hql, KdvTipKarti.class);
+            query.setMaxResults(1); 
+            KdvTipKarti kdvTip = query.uniqueResult();
+            session.getTransaction().commit();
+            return kdvTip;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
-}
 
-   @Override
-public KdvTipKarti lastKdv() {
-    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-        session.beginTransaction();
-        String hql = "FROM KdvTipKarti ORDER BY id DESC";
-        Query<KdvTipKarti> query = session.createQuery(hql, KdvTipKarti.class);
-        query.setMaxResults(1); // Sadece son kaydı getir
-        KdvTipKarti kdvTip = query.uniqueResult();
-        session.getTransaction().commit();
-        return kdvTip;
-    } catch (Exception e) {
-        e.printStackTrace();
-        throw e;
+    @Override
+    public KdvTipKarti lastKdv() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            session.beginTransaction();
+            String hql = "FROM KdvTipKarti ORDER BY id DESC";
+            Query<KdvTipKarti> query = session.createQuery(hql, KdvTipKarti.class);
+            query.setMaxResults(1); 
+            KdvTipKarti kdvTip = query.uniqueResult();
+            session.getTransaction().commit();
+            return kdvTip;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
-}
-       
-      
+
 }

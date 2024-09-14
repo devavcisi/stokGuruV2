@@ -13,19 +13,27 @@ import java.util.List;
  * @author User
  */
 public interface KdvServiceDao {
-     List<KdvTipKarti> getAllKdvTypes();
-        String addKdvTipKarti(KdvTipKarti kdvTipKarti);
+
+    List<KdvTipKarti> getAllKdvTypes();
+
+    String addKdvTipKarti(KdvTipKarti kdvTipKarti);
+
     String removeKdvTipKarti(String kdvKodu);
+
     String updateKdvTipKarti(KdvTipKarti kdvTipKarti);
-     KdvTipKarti getKdvTipKartiByKodu(String kdvKodu);
-     List<KdvTipKarti> searchKdvTipKartiByKodu(String kdvKodu);
-     
-       KdvTipKarti nextKdv(int id);
+
+    KdvTipKarti getKdvTipKartiByKodu(String kdvKodu);
+
+    List<KdvTipKarti> searchKdvTipKartiByKodu(String kdvKodu);
+
+    KdvTipKarti nextKdv(int id);
 
     KdvTipKarti previousKdv(int id);
-    
+
     KdvTipKarti firstKdv();
-    
+
     KdvTipKarti lastKdv();
-     
+    
+     KdvTipKarti getKdvTipKartiById (int id);
+
 }

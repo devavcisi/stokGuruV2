@@ -5,7 +5,6 @@
  */
 package com.guru.stokguruv2.view;
 
-import com.guru.stokguruv2.controller.StokKartiController;
 import com.guru.stokguruv2.gui.IStokKarti;
 import java.awt.event.ActionListener;
 import java.sql.Timestamp;
@@ -24,7 +23,7 @@ public class StokKarti extends javax.swing.JInternalFrame implements IStokKarti{
      */
     public StokKarti() {
         initComponents();
-        StokKartiController stokKartiController = new StokKartiController(this);
+       
     }
 
     /**

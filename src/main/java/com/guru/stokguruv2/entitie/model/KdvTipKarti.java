@@ -36,7 +36,7 @@ public class KdvTipKarti {
         this.orani = orani;
     }
 
-    // Getters and Setters
+    
     public int getId() {
         return id;
     }

@@ -8,7 +8,6 @@ package com.guru.stokguruv2.controller;
 import com.guru.stokguruv2.gui.IMainFrame;
 import com.guru.stokguruv2.view.KdvKarti;
 import com.guru.stokguruv2.view.StokKarti;
-import com.guru.stokguruv2.view.MainFrame;
 import com.guru.stokguruv2.view.StokListesi;
 import java.awt.Image;
 import java.net.URL;
@@ -22,131 +21,142 @@ import javax.swing.JMenuItem;
  * @author User
  */
 public class MainFrameController {
-    
-    
+
     private IMainFrame mainFrame;
-    private StokKarti stokKartiFrame = null;  
-    private StokListesi stokListesiFrame = null;  
+    private StokKarti stokKartiFrame = null;
+    private StokListesi stokListesiFrame = null;
+    private KdvKartiController kdvKartiController = null;
     private KdvKarti kdvKartiFrame = null;
-    
-    public MainFrameController(IMainFrame mainFrame){
-        this.mainFrame=mainFrame;
-        
-        initController(); 
-        
+    private StokKartiController stokKartiController = null;
+    private static MainFrameController instance;
+    private StokListesiController stokListesiController = null;
+
+    public MainFrameController(IMainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+
+        initController();
+
+    }
+
+    public static MainFrameController getInstance(IMainFrame mainFrame) {
+        if (instance == null) {
+            instance = new MainFrameController(mainFrame);
+        }
+        return instance;
     }
 
     private void initController() {
-        
+
         URL iconURLAdd = getClass().getResource("/images/plus.png");
-         URL iconURLtable = getClass().getResource("/images/table.png");
+        URL iconURLtable = getClass().getResource("/images/table.png");
+        URL iconURLkdv = getClass().getResource("/images/paying.png");
 
-    // URL null olabilir, bu yüzden kontrol yapalım
-    if (iconURLAdd == null) {
-        System.err.println("Icon resource not found.");
-        return;
-    }
-    
-     if (iconURLtable == null) {
-        System.err.println("Icon resource not found.");
-        return;
-    }
-    
-    // İkonu yükleyin ve yeniden boyutlandırın
-    ImageIcon AddIcon = new ImageIcon(iconURLAdd);
-    Image img = AddIcon.getImage(); // İkonu Image nesnesine çevirin
-    Image scaledImgAdd = img.getScaledInstance(16, 16, Image.SCALE_SMOOTH); // Boyutlandırma
-    ImageIcon scaledIconAdd = new ImageIcon(scaledImgAdd);
-    
-    
-     if (iconURLAdd == null) {
-        System.err.println("Icon resource not found.");
-        return;
-    }
-    
-    // İkonu yükleyin ve yeniden boyutlandırın
-    ImageIcon TableIcon = new ImageIcon(iconURLtable);
-    Image imgt = TableIcon.getImage(); // İkonu Image nesnesine çevirin
-    Image scaledImgTable = imgt.getScaledInstance(16, 16, Image.SCALE_SMOOTH); // Boyutlandırma
-    ImageIcon scaledIconTable = new ImageIcon(scaledImgTable);
-    
-    
-    // Toolbar'a dinamik olarak buton ekleme
-    JButton btn1 = new JButton();
-    JButton btn2 = new JButton();
-    
-    // Butonlara ikon ekleme
-    btn1.setIcon(scaledIconAdd);
-    btn2.setIcon(scaledIconTable);
+        ImageIcon AddIcon = new ImageIcon(iconURLAdd);
+        Image img = AddIcon.getImage();
+        Image scaledImgAdd = img.getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconAdd = new ImageIcon(scaledImgAdd);
 
-    btn1.setFocusable(false);
-    
-    btn2.setFocusable(false);
-    mainFrame.getMainToolBar().setFloatable(false); // Yer değiştirme özelliğini kapatır
-    
-    mainFrame.getMainToolBar().add(btn1);
-    mainFrame.getMainToolBar().add(btn2);
-    
-    // Menü Bara dinamik olarak menü ve menü öğesi ekleme
-    JMenu stokMenu = new JMenu("Stok");
-    JMenuItem stokKarti = new JMenuItem("Stok Kartı");
-    JMenuItem stokListesi = new JMenuItem("Stok Listesi");
-    JMenuItem kdvTipi = new JMenuItem("Kdv Tip Kartı");
-    
-    // Menü öğelerine ikon ekleme
-    stokKarti.setIcon(scaledIconAdd); // İkonu ekleyin
-    stokListesi.setIcon(scaledIconTable);
-   
-    
-    // Stok menüsüne öğeleri ekleme
-    stokMenu.add(stokKarti);
-    stokMenu.add(stokListesi);
-    stokMenu.add(kdvTipi);
-    
-    // Ana Menü Bara menüyü ekleme
-    mainFrame.getMainMenuBar().add(stokMenu);
-    
-    stokListesi.addActionListener(e -> openStokListesi());
-    stokKarti.addActionListener(e -> openStokKarti());
-    kdvTipi.addActionListener(e -> openKdvKarti());
-    
-    btn1.addActionListener(e -> openStokKarti());
-    btn2.addActionListener(e -> openStokListesi());
-    // Yeniden çizim ve boyut ayarlaması
-    mainFrame.getMainToolBar().revalidate();
-    mainFrame.getMainMenuBar().revalidate();
+        ImageIcon TableIcon = new ImageIcon(iconURLtable);
+        Image imgt = TableIcon.getImage();
+        Image scaledImgTable = imgt.getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconTable = new ImageIcon(scaledImgTable);
+
+        ImageIcon KdvIcon = new ImageIcon(iconURLkdv);
+        Image imgk = KdvIcon.getImage();
+        Image scaledImgKdv = imgk.getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+        ImageIcon scaledIconKdv = new ImageIcon(scaledImgKdv);
+
+        JButton btnStokKarti = new JButton();
+        JButton btnStokListesi = new JButton();
+        JButton btnKdvKarti = new JButton();
+
+        btnStokKarti.setIcon(scaledIconAdd);
+        btnStokListesi.setIcon(scaledIconTable);
+        btnKdvKarti.setIcon(scaledIconKdv);
+
+        btnStokKarti.setFocusable(false);
+
+        btnStokListesi.setFocusable(false);
+        btnKdvKarti.setFocusable(false);
+        mainFrame.getMainToolBar().setFloatable(false);
+
+        mainFrame.getMainToolBar().add(btnStokKarti);
+        mainFrame.getMainToolBar().add(btnStokListesi);
+        mainFrame.getMainToolBar().add(btnKdvKarti);
+
+        JMenu stokMenu = new JMenu("Stok");
+        JMenu KDVMenu = new JMenu("Kdv");
+        JMenuItem stokKarti = new JMenuItem("Stok Kartı");
+        JMenuItem stokListesi = new JMenuItem("Stok Listesi");
+        JMenuItem kdvTipi = new JMenuItem("Kdv Tip Kartı");
+
+        stokKarti.setIcon(scaledIconAdd);
+        stokListesi.setIcon(scaledIconTable);
+        kdvTipi.setIcon(scaledIconKdv);
+
+        stokMenu.add(stokKarti);
+        stokMenu.add(stokListesi);
+        KDVMenu.add(kdvTipi);
+
+        mainFrame.getMainMenuBar().add(stokMenu);
+        mainFrame.getMainMenuBar().add(KDVMenu);
+
+        stokListesi.addActionListener(e -> openStokListesi());
+        stokKarti.addActionListener(e -> openStokKarti());
+        kdvTipi.addActionListener(e -> openKdvKarti());
+
+        btnStokKarti.addActionListener(e -> openStokKarti());
+        btnStokListesi.addActionListener(e -> openStokListesi());
+        btnKdvKarti.addActionListener(e -> openKdvKarti());
+
+        mainFrame.getMainToolBar().revalidate();
+        mainFrame.getMainMenuBar().revalidate();
     }
-    
-     // StokKartiInternalFrame'i açan fonksiyon (tek örnek üzerinden)
+
     private void openKdvKarti() {
         if (kdvKartiFrame == null || kdvKartiFrame.isClosed()) {
             kdvKartiFrame = new KdvKarti();
             mainFrame.getDesktopPaneControl().add(kdvKartiFrame);
+            kdvKartiController = new KdvKartiController(kdvKartiFrame, mainFrame);
         }
         kdvKartiFrame.setVisible(true);
         kdvKartiFrame.toFront();
     }
-  
-    // StokKartiInternalFrame'i açan fonksiyon (tek örnek üzerinden)
-    private void openStokKarti() {
+
+    public StokKarti getStokKartiFrame() {
+        return stokKartiFrame;
+    }
+
+    public StokKartiController getStokKartiController() {
+        return stokKartiController;
+    }
+
+    public StokListesiController getStokListesiController() {
+        return stokListesiController;
+    }
+
+    public KdvKartiController getKdvKartiController() {
+        return kdvKartiController;
+    }
+
+    public void openStokKarti() {
         if (stokKartiFrame == null || stokKartiFrame.isClosed()) {
             stokKartiFrame = new StokKarti();
+            stokKartiController = new StokKartiController(stokKartiFrame, mainFrame);
             mainFrame.getDesktopPaneControl().add(stokKartiFrame);
         }
         stokKartiFrame.setVisible(true);
         stokKartiFrame.toFront();
     }
 
-    // StokListesiInternalFrame'i açan fonksiyon (tek örnek üzerinden)
     private void openStokListesi() {
         if (stokListesiFrame == null || stokListesiFrame.isClosed()) {
             stokListesiFrame = new StokListesi();
             mainFrame.getDesktopPaneControl().add(stokListesiFrame);
+            stokListesiController = new StokListesiController(stokListesiFrame, mainFrame);
         }
         stokListesiFrame.setVisible(true);
         stokListesiFrame.toFront();
     }
-    
-    
-    
+
 }

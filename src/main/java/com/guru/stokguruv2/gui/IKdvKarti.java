@@ -5,7 +5,7 @@
  */
 package com.guru.stokguruv2.gui;
 
-import java.awt.event.ActionListener;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 /**
@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 public interface IKdvKarti {
  
      JPanel getNavPanel();
-      void buttonAra(ActionListener actionListener);
+ 
       
       String getKdvAdi();
 
@@ -28,5 +28,7 @@ public interface IKdvKarti {
      String getKdvOrani();
 
      void setKdvOrani(String kdvOrani);
+     
+     JComboBox getKdvComboBox();
     
 }

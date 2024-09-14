@@ -30,11 +30,11 @@ public interface StokKartiDao {
     Stok nextStok(int id);
 
     Stok previousStok(int id);
-    
+
     Stok firsStok();
-    
+
     Stok lastStok();
-    
+
     List<StokKdvDTO> getListStokKartiByKdvDTO();
 
 }

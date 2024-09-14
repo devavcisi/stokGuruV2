@@ -10,6 +10,7 @@ package com.guru.stokguruv2.entitie.model;
  * @author User
  */
 public class KdvItem {
+
     private int id;
     private String ad;
 
@@ -28,6 +29,6 @@ public class KdvItem {
 
     @Override
     public String toString() {
-        return ad; // JComboBox'da görünen değer
+        return ad;
     }
 }

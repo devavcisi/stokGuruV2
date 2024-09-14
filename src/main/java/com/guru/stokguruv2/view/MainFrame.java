@@ -21,10 +21,19 @@ public class MainFrame extends javax.swing.JFrame implements IMainFrame {
      * Creates new form MainFrame
      */
     
-    
+     private static MainFrame instance;
+    private MainFrameController mainFrameController;
+
     public MainFrame() {
         initComponents();
-        MainFrameController mainFrameController = new MainFrameController(this);
+        mainFrameController = MainFrameController.getInstance(this);
+    }
+
+    public static MainFrame getInstance() {
+        if (instance == null) {
+            instance = new MainFrame();
+        }
+        return instance;
     }
 
     /**

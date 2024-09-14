@@ -11,7 +11,7 @@ public abstract class AbstractNavigationPanel extends JPanel {
     protected JButton btnFirst, btnPrevious, btnNext, btnLast, btnSave, btnDelete,btnUpdate;
 
     public AbstractNavigationPanel() {
-        // Butonları oluştur
+    
         btnFirst = new JButton("İlk Kayıt");
         btnPrevious = new JButton("Geri");
         btnNext = new JButton("İleri");
@@ -20,7 +20,7 @@ public abstract class AbstractNavigationPanel extends JPanel {
         btnDelete = new JButton("Sil");
         btnUpdate = new JButton("Güncelle");
 
-        // Butonları panele ekle
+        
         add(btnFirst);
         add(btnPrevious);
         add(btnNext);

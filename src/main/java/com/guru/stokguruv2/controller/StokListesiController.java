@@ -1,39 +1,93 @@
-    /*
+/*
      * To change this license header, choose License Headers in Project Properties.
      * To change this template file, choose Tools | Templates
      * and open the template in the editor.
-     */
-    package com.guru.stokguruv2.controller;
+ */
+package com.guru.stokguruv2.controller;
 
-    import com.guru.stokguruv2.entitie.model.Stok;
-    import com.guru.stokguruv2.entitie.model.StokKdvDTO;
-    import com.guru.stokguruv2.gui.IStokListesi;
-    import com.guru.stokguruv2.service.serviceImp.StokServiceDaoImp;
-    import java.util.ArrayList;
-    import java.util.List;
-    import javax.swing.JTable;
-    import javax.swing.table.DefaultTableModel;
+import com.guru.stokguruv2.entitie.model.Stok;
+import com.guru.stokguruv2.entitie.model.StokKdvDTO;
+import com.guru.stokguruv2.gui.IMainFrame;
+import com.guru.stokguruv2.gui.IStokListesi;
+import com.guru.stokguruv2.service.serviceImp.StokServiceDaoImp;
+import com.guru.stokguruv2.view.StokListesi;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
-    /**
-     *
-     * @author User
-     */
-    public class StokListesiController {
-        private IStokListesi stokListesi;
-          private JTable stokTable;
-         StokServiceDaoImp stokService = new StokServiceDaoImp();
-            private List<StokKdvDTO> stokList = new ArrayList<>();
+/**
+ *
+ * @author User
+ */
+public class StokListesiController {
 
-         public StokListesiController(IStokListesi stokListesi){
-            this.stokListesi=stokListesi;
-                stokTable = stokListesi.getTableStokListesi();
-                 initComponents();
+    private IMainFrame mainFrame;
+    private IStokListesi stokListesi;
+    private JTable stokTable;
+    private StokServiceDaoImp stokService = new StokServiceDaoImp();
+    private List<StokKdvDTO> stokList = new ArrayList<>();
+    private static MainFrameController instance;
+
+    public StokListesiController(IStokListesi stokListesi, IMainFrame mainFrame) {
+        this.stokListesi = stokListesi;
+        this.mainFrame = mainFrame;
+        stokTable = stokListesi.getTableStokListesi();
+        initComponents();
+        initPopupMenu();
+    }
+
+    private void initComponents() {
+        tabloyuDoldur();
+    }
+
+    private void initPopupMenu() {
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem stokKartiItem = new JMenuItem("Stok Kartı");
+        popupMenu.add(stokKartiItem);
+
+        stokTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger() && stokTable.getSelectedRow() != -1) {
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
+
+        stokKartiItem.addActionListener(e -> {
+            int selectedRow = stokTable.getSelectedRow();
+            if (selectedRow != -1) {
+                String stokKodu = (String) stokTable.getValueAt(selectedRow, 0);
+                Stok stok = stokService.getStokbyStokKoduStokKarti(stokKodu);
+                openStokKarti(stok);
+            }
+        });
+    }
+
+    private void openStokKarti(Stok stok) {
+        MainFrameController controller = MainFrameController.getInstance(mainFrame);
+
+        if (controller.getStokKartiFrame() != null && !controller.getStokKartiFrame().isClosed()) {
+            controller.getStokKartiFrame().setVisible(true);
+            controller.getStokKartiFrame().toFront();
+        } else {
+            controller.openStokKarti();
         }
 
-        private void initComponents() {
-            tabloyuDoldur();
+        StokKartiController stokKartiController = controller.getStokKartiController();
+        if (stokKartiController != null) {
+            stokKartiController.updateFormFields(stok);
+        } else {
+            System.out.println("StokKartiController örneği oluşturulmadı.");
         }
-       private void tabloyuDoldur() {
+    }
+
+    public void tabloyuDoldur() {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -41,7 +95,6 @@
             }
         };
 
-        // Kolon isimlerini ayarlayın
         Object[] columnsName = new Object[10];
         columnsName[0] = "Stok Kodu";
         columnsName[1] = "Stok Adı";
@@ -85,6 +138,4 @@
             }
         }
     }
-
-
-    }
+}
